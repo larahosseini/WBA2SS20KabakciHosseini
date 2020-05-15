@@ -120,7 +120,6 @@ dist
 .idea/jsLibraryMappings.xml
 .idea/misc.xml
 .idea/modules.xml
-api/
+
 finder.iml
-package-lock.json
-package.json
+
