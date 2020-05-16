@@ -16,10 +16,9 @@ app.use(morgan('dev'))
 app.use(bodyParser.urlencoded(
     {
         extended: false
-    }
-));
+    })
+);
 app.use(bodyParser.json);
-
 
 // cors handling
 app.use((req, res, next) => {
@@ -30,7 +29,7 @@ app.use((req, res, next) => {
         res.status(200).json({});
     }
     next();
-})
+});
 
 // routes
 // ======================================================
@@ -49,7 +48,7 @@ app.use((req, res, next) => {
 })
 
 // error
-app.use((error, req, res, next) => {
+app.use((error, req, res) => {
     res.status(error.status || 500);
     res.json({
         message: error.message
