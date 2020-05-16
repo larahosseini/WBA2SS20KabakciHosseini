@@ -1,10 +1,13 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+const mongoose = require('mongoose');
 
+// database setup
+mongoose.connect('mongodb://localhost:27017/db_finder');
 
+// logging setup
 app.use(morgan('dev'))
-
 
 // error handling
 app.use((req, res, next) => {
