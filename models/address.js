@@ -10,4 +10,4 @@ const addressSchema = mongoose.Schema(
     }
 );
 
-module.exports = Address = mongoose.model('Address', addressSchema);
+module.exports = mongoose.model('Address', addressSchema);
