@@ -16,7 +16,8 @@ router.post('/', (req, res) => {
     );
     address.save()
         .then(result => {
-            if(result) {
+            console.log(result);
+            if (result) {
                 res.status(201).json({
                     message: 'Address was successfully created',
                     created_object: address
@@ -33,6 +34,22 @@ router.post('/', (req, res) => {
             );
         }
     )
+});
+
+// GET ALL Addresses
+router.get('/', (req, res) => {
+    Address.find()
+        .exec()
+        .then(results => {
+            if (results) {
+                res.status(200).json(results)
+            }
+        }).catch(err => {
+        console.log(err);
+        res.status(500).json(
+            {error: err}
+        );
+    });
 });
 
 module.exports = router;
