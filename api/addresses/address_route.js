@@ -36,7 +36,7 @@ router.post('/', (req, res) => {
     )
 });
 
-// GET ALL Addresses
+// GET ALL Route
 router.get('/', (req, res) => {
     Address.find()
         .exec()
@@ -51,5 +51,30 @@ router.get('/', (req, res) => {
         );
     });
 });
+
+// GET ID Route
+router.get('/:addressId', ((req, res) => {
+    Address.findById(req.params.addressId)
+        .exec()
+        .then(result => {
+            console.log(result);
+            if (result) {
+                res.status(200).json(result);
+            } else {
+                res.status(404).json(
+                    {message: 'Address[Id:' + req.params.addressId + '] NOT FOUND'}
+                );
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500).json(
+                {message: error}
+            );
+        });
+}));
+
+
+
 
 module.exports = router;
