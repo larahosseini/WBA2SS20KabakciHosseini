@@ -74,27 +74,4 @@ router.get('/:addressId', ((req, res) => {
         });
 }));
 
-// GET Address By Street Name
-router.get('/', ((req, res) => {
-    const street_name = req.query.street
-    Address.find({
-        street: street_name
-    })
-        .exec()
-        .then(results => {
-            console.log(results);
-            if (results) {
-                res.status(200).json(results);
-            } else {
-                res.status(404).json(
-                    {message: 'Address[Street:' + street_name + '] NOT FOUND'}
-                );
-            }
-        }).catch(error => {
-        console.log(error);
-        res.status(500).json(error)
-    });
-}));
-
-
 module.exports = router;
