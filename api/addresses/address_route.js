@@ -96,4 +96,32 @@ router.delete('/:addressId', (req, res) => {
         });
 });
 
+// PATCH
+// how to use
+/*
+*   [
+*       {"propertyName": "postal_code", "value": 29}
+*   ]
+*
+* */
+router.patch('/:addressId', (req, res) => {
+    const id = req.params.addressId;
+    const updateOps = {};
+    for (const ops of req.body) {
+        updateOps[ops.propertyName] = ops.value;
+    }
+    Address.update({_id: id}, {$set: updateOps})
+        .exec()
+        .then(result => {
+            console.log(result);
+            res.status(200).json(result);
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500).json({
+                error: error
+            })
+        });
+});
+
 module.exports = router;
