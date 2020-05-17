@@ -74,4 +74,26 @@ router.get('/:addressId', ((req, res) => {
         });
 }));
 
+// DELETE Route
+router.delete('/:addressId', (req, res) => {
+    const id = req.params.addressId;
+    Address.remove({
+        _id: id
+    })
+        .exec()
+        .then(result => {
+            console.log('DELETE: ' + result)
+            res.status(200).json({
+                message: 'DELETED successfully the Address',
+                deletedObject: result
+            });
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(404).json(
+                {error: error}
+            );
+        });
+});
+
 module.exports = router;
