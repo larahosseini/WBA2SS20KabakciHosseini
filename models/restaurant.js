@@ -2,10 +2,29 @@ const mongoose = require('mongoose');
 const address = require('../models/address');
 const Schema = mongoose.Schema;
 
+// kitchen styles
+const styles = ['arabic', 'turkish', 'italian', 'japanese',
+    'chinese', 'mexican', 'indian', 'greek', 'american', 'german',
+    'vegan', 'thai', 'sushi', 'syrian'
+];
+
+//
 const restaurantSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: String,
-    address: {type: Schema.Types.ObjectId, ref: 'Address'},
+    address: {
+        type: Schema.Types.ObjectId,
+        city: String,
+        street: String,
+        street_number: Number,
+        postal_code: Number
+    },
+    kitchen_styles: {
+        type: {
+            type: String,
+            enum: styles
+        }
+    }
 });
 
 module.exports = Restaurant = mongoose.model('Restaurant', restaurantSchema);
