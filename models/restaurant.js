@@ -13,7 +13,6 @@ const restaurantSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: String,
     address: {
-        type: Schema.Types.ObjectId,
         city: String,
         street: String,
         street_number: Number,
@@ -22,7 +21,7 @@ const restaurantSchema = mongoose.Schema({
     kitchen_styles: {
         type: {
             type: String,
-            enum: styles
+            style: styles
         }
     }
 });
