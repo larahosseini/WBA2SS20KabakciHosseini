@@ -30,4 +30,44 @@ router.post('/', (req, res) => {
     });
 });
 
+// GET all restaurants
+router.get('/', (req, res) => {
+    Restaurant.find()
+        .exec()
+        .then(result => {
+            console.log(result);
+            res.status(200).json(result);
+        })
+        .catch(error => {
+            console.log('Error: ' + error);
+            res.status(500).json({
+                    error: error
+                }
+            );
+        });
+});
+
+// GET ID From Restaurants
+router.get('/:id', (req, res) => {
+    Restaurant.findById(req.params.id)
+        .exec()
+        .then(result => {
+            if (result) {
+                res.status(200).json(result);
+            } else {
+                res.status(404).json({
+                    message: 'Restaurant [ID: ' + res.params.id + '] Not Found'
+                });
+            }
+        })
+        .catch(error => {
+            console.log('Error: ' + error);
+            res.status(500).json(
+                {
+                    error: error
+                }
+            );
+        });
+});
+
 module.exports = router;
