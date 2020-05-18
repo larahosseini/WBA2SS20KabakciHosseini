@@ -4,18 +4,20 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-const addressRoute = require('../api/addresses/address_route');
+// const addressRoute = require('../api/addresses/address_route');
+const restaurantRoute = require('./restaurants/restaurant_route');
 
 // database setup
-mongoose.connect('mongodb://localhost:27017/db_finder');
+mongoose.connect('mongodb://localhost:27017/db_finder',
+    {useNewUrlParser: true, useUnifiedTopology: true});
 
 // logging setup
-app.use(morgan('dev'))
+app.use(morgan('dev'));
 
 // body Parser setup
 app.use(bodyParser.urlencoded(
     {
-        extended: false
+        extended: true
     })
 );
 app.use(bodyParser.json());
@@ -35,7 +37,9 @@ app.use((req, res, next) => {
 // ======================================================
 
 // route /api/addresses
-app.use('/api/addresses', addressRoute);
+// app.use('/api/addresses', addressRoute);
+
+app.use('/api/restaurants', restaurantRoute);
 
 
 // ======================================================
