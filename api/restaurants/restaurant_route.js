@@ -70,4 +70,41 @@ router.get('/:id', (req, res) => {
         });
 });
 
+// PATCH Request
+// how to use
+/*
+*   [
+*       {"propertyName": "name", "value": "Restaurant A"}
+*   ]
+*
+* */
+router.patch('/:id', (req, res) => {
+    const id = req.params.id;
+    const updateOps = {};
+    for (const ops of req.body) {
+        updateOps[ops.propertyName] = ops.value;
+    }
+    Restaurant.update({_id: id}, {$set: updateOps})
+        .exec()
+        .then(result => {
+            console.log('Update' + result);
+            if (result) {
+                res.status(200).json(result);
+            } else {
+                res.status(404).json({
+                    message: 'Restaurant [ID: ' + res.params.id + '] Not Found'
+                });
+            }
+        })
+        .catch(error => {
+            console.log('Error: ' + error);
+            res.status(500).json(
+                {
+                    error: error
+                }
+            );
+        });
+
+});
+
 module.exports = router;
