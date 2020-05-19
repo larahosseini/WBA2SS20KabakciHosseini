@@ -107,4 +107,28 @@ router.patch('/:id', (req, res) => {
 
 });
 
+// DELETE Request
+router.delete('/:id', (req, res) => {
+    const id = req.params.id;
+    Restaurant.findOneAndDelete({_id: id})
+        .exec()
+        .then(result => {
+            console.log('DELETE: ' + result);
+            if (result) {
+                res.status(204).json(
+                    {message: 'DELETED [ID: ' + id + '] Restaurant successfully'}
+                );
+            } else {
+                res.status(404).json(
+                    {message: 'Restaurant [ID: ' + res.params.id + '] Not Found'}
+                );
+            }
+        }).catch(error => {
+        console.log('Error: ' + error);
+        res.status(500).json({
+            error: error
+        });
+    });
+});
+
 module.exports = router;
