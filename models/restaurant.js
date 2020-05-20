@@ -2,11 +2,7 @@ const mongoose = require('mongoose');
 const address = require('../models/address');
 const Schema = mongoose.Schema;
 
-// kitchen styles
-const styles = ['arabic', 'turkish', 'italian', 'japanese',
-    'chinese', 'mexican', 'indian', 'greek', 'american', 'german',
-    'vegan', 'thai', 'sushi', 'syrian'
-];
+
 
 //
 const restaurantSchema = mongoose.Schema({
