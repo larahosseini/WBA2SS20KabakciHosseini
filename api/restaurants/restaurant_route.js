@@ -122,7 +122,7 @@ router.delete('/:id', (req, res) => {
         .then(result => {
             console.log('DELETE: ' + result);
             if (result) {
-                res.status(204).json(
+                res.status(200).json(
                     {message: 'DELETED [ID: ' + id + '] Restaurant successfully'}
                 );
             } else {
