@@ -5,18 +5,25 @@ const Restaurant = require('../../models/restaurant');
 
 // POST request
 router.post('/', (req, res) => {
+    let kitchen_styles = []
+    for (let i = 0; i < req.body.kitchen_styles.length; i++) {
+        console.log('Style: ' + req.body.kitchen_styles[i].style);
+        const style = {
+            style: req.body.kitchen_styles[i].style
+        };
+        kitchen_styles.push(style);
+    }
+
     const restaurant = new Restaurant({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         address: {
             city: req.body.address.city,
-            street_name: req.body.address.street_name,
+            street: req.body.address.street,
             street_number: req.body.address.street_number,
             postal_code: req.body.address.postal_code
         },
-        kitchen_style: {
-            style: req.body.kitchen_styles.style
-        }
+        kitchen_styles: kitchen_styles
     });
     restaurant.save()
         .then(result => {
