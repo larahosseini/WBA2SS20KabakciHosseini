@@ -11,19 +11,22 @@ const styles = ['arabic', 'turkish', 'italian', 'japanese',
 //
 const restaurantSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    name: String,
+    name: {type: String, required: true, lowercase: true},
     address: {
-        city: String,
-        street: String,
-        street_number: Number,
-        postal_code: Number
+        city: {type: String, required: true},
+        street: {type: String, required: true},
+        street_number: {type: Number, required: true},
+        postal_code: {type: Number, required: true}
     },
-    kitchen_styles: {
-        type: {
-            type: String,
-            style: styles
+    kitchen_styles: [
+        {
+            style: {
+                type: String,
+                required: true,
+                lowercase: true
+            }
         }
-    }
+    ]
 });
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);
