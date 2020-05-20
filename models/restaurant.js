@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 
 
-//
+// schema for restaunrants
 const restaurantSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: {type: String, required: true, lowercase: true},
