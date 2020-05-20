@@ -39,19 +39,12 @@ router.post('/', (req, res) => {
 
 // GET all restaurants
 router.get('/', (req, res) => {
-    Restaurant.find()
-        .exec()
-        .then(result => {
-            console.log(result);
-            res.status(200).json(result);
-        })
-        .catch(error => {
-            console.log('Error: ' + error);
-            res.status(500).json({
-                    error: error
-                }
-            );
-        });
+    // check if query strings are available, if not get all restaurants, if yes get the restaurants filtered by the query
+    if (Object.keys(req.query).length > 0) {
+        filterRestaurants(res, req.query);
+    } else {
+        getAllRestaurants(res);
+    }
 });
 
 // GET ID From Restaurants
@@ -111,7 +104,6 @@ router.patch('/:id', (req, res) => {
                 }
             );
         });
-
 });
 
 // DELETE Request
@@ -137,5 +129,40 @@ router.delete('/:id', (req, res) => {
         });
     });
 });
+
+
+function getAllRestaurants(res) {
+    Restaurant.find()
+        .exec()
+        .then(result => {
+            console.log(result);
+            res.status(200).json(result);
+        })
+        .catch(error => {
+            console.log('Error: ' + error);
+            res.status(500).json({
+                    error: error
+                }
+            );
+        });
+}
+
+function filterRestaurants(res, query) {
+    console.log(query);
+    Restaurant.find(query)
+        .exec()
+        .then(result => {
+            if (result) {
+                res.status(200).json(result);
+            }
+        })
+        .catch(error => {
+            console.log('Error: ' + error);
+            res.status(500).json({
+                    error: error
+                }
+            );
+        });
+}
 
 module.exports = router;
