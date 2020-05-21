@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const restaurantRoute = require('./restaurants/restaurant_route');
 
 // database setup
-mongoose.connect('mongodb://localhost:27017/db_finder',
+mongoose.connect('mongodb+srv://admin:admin@cluster0-8efry.mongodb.net/test?retryWrites=true&w=majority',
     {useNewUrlParser: true, useUnifiedTopology: true});
 
 // logging setup
