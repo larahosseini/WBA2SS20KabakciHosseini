@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 
 //verbindung zur DB wird hergestellt, datei importiert
 const restaurantRoute = require('./restaurants/restaurant_route');
+const userRoute = require('./users/user_route');
 
 // database setup, verbindung zur DB wird erstellt
 //deprecated - wenn software oder funktion abgeändert wird und das alte nicht mehr benutzt werden soll sondern das neue
@@ -43,7 +44,7 @@ app.use((req, res, next) => { //wird bei jeder anfrage aktivert
 
 //alle anfragen die hier her kommen sollen weitergeleitet werden zu der datei rest.Route
 app.use('/api/restaurants', restaurantRoute);
-
+app.use('/api/users', userRoute);
 
 // ======================================================
 
