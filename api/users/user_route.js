@@ -27,24 +27,26 @@ router.post('/', (req, res) => {
         console.log('CREATED: ' + result)
         if (result) {
             res.status(405).json(
-                {message: '[User with Username: ' + user.username + '] exists, please choose an another username'}
+                {
+                    message: '[User with Username: ' + user.username + '] exists, please choose an another username'
+                }
             );
         } else {
             user.save().then(result => {
                 console.log(result);
-                res.status(201).json(result);
+                res.status(201).json(
+                    {
+                        message: 'New User Created',
+                        createUser: result
+                    });
             }).catch(error => {
                 console.log(error);
-                res.status(500).json({
-                    error: error
-                });
+                handleError(error, 500, res);
             });
         }
     }).catch(error => {
         console.log(error);
-        res.status(500).json(
-            {error: error}
-        );
+        handleError(error, 500, res);
     });
 });
 
@@ -55,7 +57,7 @@ router.get('/', (req, res) => {
         if (req.query.username) {
             getUserByUsername(res, req.query);
         } else {
-            res.status(405).json({
+            res.status(400).json({
                 message: 'NOT ALLOWED: Only Search By Username is allowed'
             });
         }
@@ -97,6 +99,10 @@ router.get('/:id/locations', (req, res) => {
                 }).catch((err) => {
                 console.log(err);
             });
+        }else {
+            return res.status(400).json(
+                {message: 'Query Not Supported'}
+            );
         }
     } else {
         res.status(404).json(
@@ -208,9 +214,16 @@ function getAddress(results, response) {
                 response.status(200).json(results);
             })
             .catch(error => {
-            console.log(error);
-        });
+                console.log(error);
+            });
     }
+}
+
+function handleError(error, statuscode, response) {
+    console.log(error);
+    return response.status(statuscode).json(
+        {message: error}
+    );
 }
 
 module.exports = router;
