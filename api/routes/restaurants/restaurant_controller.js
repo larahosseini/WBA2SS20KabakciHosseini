@@ -181,6 +181,24 @@ exports.createEvent = (req, res) => {
         });
 }
 
+exports.getEventById = (req, res) => {
+    Event.findById(req.params.id)
+        .exec()
+        .then(result => {
+            if (result) {
+                console.log('Found Event: ' + result);
+                return res.status(200).json(result);
+            } else {
+                return res.status(404).json({
+                    message: 'Event not found'
+                });
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, res);
+        })
+};
+
 //gets all restaurants
 function getAllRestaurants(res) {
     Restaurant.find() //sucht nach den Werten die ich eingebe, sucht in der db nach allen restaurants

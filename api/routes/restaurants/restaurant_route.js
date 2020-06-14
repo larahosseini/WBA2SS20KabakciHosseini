@@ -38,7 +38,11 @@ router.put('/:id/address', restaurantController.updateRestaurantAddressById)
 router.delete('/:id', restaurantController.deleteRestaurantById);
 
 // ========================================= events
+
 // Post request: ein event erstellen
 router.post('/:id/events', restaurantController.createEvent);
+
+// GET request: kriegt mit Hilfe der id ein event zurück
+router.get('/events/:id', restaurantController.getEventById);
 
 module.exports = router;
