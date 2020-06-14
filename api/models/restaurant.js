@@ -27,15 +27,6 @@ const restaurantSchema = mongoose.Schema({ //schema = unterfunktion von mongoose
                 ref: 'User'
             }
         }
-    ],
-    events: [
-        {
-            event: {
-                name: String,
-                start: {type: Date, default: Date.now},
-                end: {type: Date, default:Date.now}
-            }
-        }
     ]
 });
 
