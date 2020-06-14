@@ -153,6 +153,34 @@ exports.deleteRestaurantById = (req, res) => {
     });
 }
 
+// ================================================= events
+
+exports.createEvent = (req, res) => {
+    const restaurantId = req.params.id;
+    const event = new Event({
+        _id: new mongoose.Types.ObjectId(),
+        restaurantId: restaurantId,
+        name: req.body.name,
+        start: req.body.startDate,
+        end: req.body.endDate
+    });
+    event.save()
+        .then(event => {
+            if (event) {
+                console.log('Event created: ' + event);
+                return res.status(201).json(
+                    {
+                        message: 'Event successful created',
+                        createdEvent: event
+                    }
+                );
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, res);
+        });
+}
+
 //gets all restaurants
 function getAllRestaurants(res) {
     Restaurant.find() //sucht nach den Werten die ich eingebe, sucht in der db nach allen restaurants
