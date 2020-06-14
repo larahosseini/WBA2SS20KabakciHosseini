@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router(); //damit ich anfragen wie GET POST bearbeiten kann, router funktion um GET POST anfragen abzufangen
 const mongoose = require('mongoose'); //importieren für client
-const Restaurant = require('../../models/restaurant');
+const Restaurant = require('../models/restaurant');
 
 // POST request, dafür da um neue restaurant zu speichern
 router.post('/', (req, res) => { //parameter übergeben: adresse

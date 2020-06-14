@@ -3,8 +3,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const NodeGeocoder = require('node-geocoder');
 
-const User = require('../../models/user');
-const Restaurant = require('../../models/restaurant');
+const User = require('../models/user');
+const Restaurant = require('../models/restaurant');
 
 const geoCoder = NodeGeocoder({
     provider: 'openstreetmap'
