@@ -19,6 +19,23 @@ const restaurantSchema = mongoose.Schema({ //schema = unterfunktion von mongoose
                 lowercase: true //kleine schreibweise
             }
         }
+    ],
+    bookmarked_users: [
+        {
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        }
+    ],
+    events: [
+        {
+            event: {
+                name: String,
+                start: {type: Date, default: Date.now},
+                end: {type: Date, default:Date.now}
+            }
+        }
     ]
 });
 
