@@ -161,8 +161,8 @@ exports.createEvent = (req, res) => {
         _id: new mongoose.Types.ObjectId(),
         restaurantId: restaurantId,
         name: req.body.name,
-        start: req.body.startDate,
-        end: req.body.endDate
+        startDate: new Date(req.body.startDate),
+        endDate: new Date(req.body.endDate)
     });
     event.save()
         .then(event => {
