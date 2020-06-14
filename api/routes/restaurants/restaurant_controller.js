@@ -201,7 +201,7 @@ exports.getEventById = (req, res) => {
 
 exports.getEventsByRestaurantId = (req, res) => {
     const restaurantId = req.params.restaurantId;
-    Event.find(restaurantId)
+    Event.find({restaurantId})
         .exec()
         .then(results => {
             console.log('Events found: ' + results);
