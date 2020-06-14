@@ -26,6 +26,14 @@ router.get('/:id', restaurantController.getRestaurantById);
 //patch = man kann einzelne sachen ändern
 router.patch('/:id', restaurantController.updateRestaurantById);
 
+// PUT request
+// nur den namen des Restaurants updaten
+router.put('/:id/name', restaurantController.updateRestaurantNameById);
+
+// PUT request
+// nur die Adresse des Restaurants updaten
+router.put('/:id/address', restaurantController.updateRestaurantAddressById)
+
 // DELETE Request
 router.delete('/:id', restaurantController.deleteRestaurantById);
 

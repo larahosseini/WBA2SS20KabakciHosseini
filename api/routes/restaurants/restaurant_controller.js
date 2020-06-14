@@ -1,4 +1,6 @@
+const mongoose = require('mongoose');
 const Restaurant = require('../../models/restaurant');
+const Event = require('../../models/event');
 
 exports.createRestaurant = (req, res) => {
 //Hilfs array um die Liste der übergebenen Küchen zu speichern
@@ -99,6 +101,35 @@ exports.updateRestaurantById = (req, res) => {
         });
 }
 
+exports.updateRestaurantNameById = (req, res) => {
+    const newName = req.body.name;
+    const id = req.params.id;
+    // wenn wert existiert bzw mitgegeben wurde in der anfrage
+    if (newName) {
+        handleUpdates(res, id, {name: newName});
+    } else {
+        return res.status(400).json(
+            {
+                message: 'Operation not supported, please specify a name'
+            }
+        );
+    }
+}
+
+exports.updateRestaurantAddressById = (req, res) => {
+    const address = req.body.address;
+    const id = req.params.id;
+    if (address) {
+        handleUpdates(res, id, {address: address});
+    } else {
+        return res.status(400).json(
+            {
+                message: 'Operation not supported, please specify a name'
+            }
+        );
+    }
+}
+
 exports.deleteRestaurantById = (req, res) => {
     const id = req.params.id;
     Restaurant.findOneAndDelete({_id: id}) //suchparameter angeben
@@ -157,4 +188,30 @@ function filterRestaurants(res, query) {
                 }
             );
         });
+}
+
+function handleUpdates(res, id, updates) {
+    Restaurant.findByIdAndUpdate(id, updates, {new: true})
+        .exec()
+        .then(result => {
+            if (result) {
+                return res.status(200).json(
+                    {
+                        message: 'Updated successful applied',
+                        updatedRestaurant: result
+                    }
+                );
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, res);
+        });
+}
+
+function handleError(error, statusCode, response) {
+    return response.status(statusCode).json(
+        {
+            message: error
+        }
+    );
 }
