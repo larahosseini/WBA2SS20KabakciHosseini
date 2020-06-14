@@ -106,7 +106,7 @@ exports.updateRestaurantNameById = (req, res) => {
     const id = req.params.id;
     // wenn wert existiert bzw mitgegeben wurde in der anfrage
     if (newName) {
-        handleUpdates(res, id, {name: newName});
+        handleRestaurantUpdates(res, id, {name: newName});
     } else {
         return res.status(400).json(
             {
@@ -120,7 +120,7 @@ exports.updateRestaurantAddressById = (req, res) => {
     const address = req.body.address;
     const id = req.params.id;
     if (address) {
-        handleUpdates(res, id, {address: address});
+        handleRestaurantUpdates(res, id, {address: address});
     } else {
         return res.status(400).json(
             {
@@ -199,6 +199,24 @@ exports.getEventById = (req, res) => {
         })
 };
 
+exports.getEventsByRestaurantId = (req, res) => {
+    const restaurantId = req.params.restaurantId;
+    Event.find(restaurantId)
+        .exec()
+        .then(results => {
+            console.log('Events found: ' + results);
+            return res.status(200).json(
+                {
+                    count: results.length,
+                    events: results
+                }
+            );
+        })
+        .catch(error => {
+            handleError(error, 500, res);
+        });
+};
+
 //gets all restaurants
 function getAllRestaurants(res) {
     Restaurant.find() //sucht nach den Werten die ich eingebe, sucht in der db nach allen restaurants
@@ -236,7 +254,7 @@ function filterRestaurants(res, query) {
         });
 }
 
-function handleUpdates(res, id, updates) {
+function handleRestaurantUpdates(res, id, updates) {
     Restaurant.findByIdAndUpdate(id, updates, {new: true})
         .exec()
         .then(result => {

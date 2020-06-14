@@ -45,4 +45,7 @@ router.post('/:id/events', restaurantController.createEvent);
 // GET request: kriegt mit Hilfe der id ein event zurück
 router.get('/events/:id', restaurantController.getEventById);
 
+// GET request: kriegt eine liste aller events von einem restaurant
+router.get('/:restaurantId/events', restaurantController.getEventsByRestaurantId);
+
 module.exports = router;
