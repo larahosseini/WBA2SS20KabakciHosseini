@@ -181,23 +181,6 @@ exports.createEvent = (req, res) => {
         });
 }
 
-exports.getEventById = (req, res) => {
-    Event.findById(req.params.id)
-        .exec()
-        .then(result => {
-            if (result) {
-                console.log('Found Event: ' + result);
-                return res.status(200).json(result);
-            } else {
-                return res.status(404).json({
-                    message: 'Event not found'
-                });
-            }
-        })
-        .catch(error => {
-            handleError(error, 500, res);
-        })
-};
 
 exports.getEventsByRestaurantId = (req, res) => {
     const restaurantId = req.params.restaurantId;
@@ -273,6 +256,7 @@ function handleRestaurantUpdates(res, id, updates) {
 }
 
 function handleError(error, statusCode, response) {
+    console.log('Error: ' + error);
     return response.status(statusCode).json(
         {
             message: error
