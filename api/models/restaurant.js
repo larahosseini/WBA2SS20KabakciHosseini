@@ -8,7 +8,7 @@ const restaurantSchema = mongoose.Schema({ //schema = unterfunktion von mongoose
     address: { //feld von der tabelle restaurant
         city: {type: String, required: true}, //req. wenn ich als feld haben will, dann muss ich das mit aufschreiben, aussage wird benötigt
         street: {type: String, required: true},
-        street_number: {type: Number, required: true},
+        street_number: {type: String, required: true},
         postal_code: {type: Number, required: true}
     },
     kitchen_styles: [ //array, um mehrere sachen zu speichern
