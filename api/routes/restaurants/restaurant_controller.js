@@ -138,6 +138,29 @@ exports.updateRestaurantAddressById = (req, res) => {
     }
 }
 
+exports.updateRestaurantKitchenById = (req, res) => {
+    const id = req.params.id;
+    let kitchen = [];
+    if(req.body.kitchen_styles){
+        for (let i = 0; i < req.body.kitchen_styles.length; i++) { //liste von küchen speichern, for schleife: beim erstellen eines resta. immer angeben was für ne küche aber da ich nicht weiß wie viele es sind, will ich dynamisch halten, wird so oft durchgelaufen wie viel drinne steht
+            console.log('Style: ' + req.body.kitchen_styles[i].style); //debug, ausgabe am terminal
+            //Speichern des Wertes der Küche in der Hilfsvariable
+            const style = {
+                style: req.body.kitchen_styles[i].style //speichern der werte
+            };
+            //den gelesenen Wert in das hilfs Array speichern
+            kitchen.push(style); //push:neue elemente ins array hinzufügen
+        }
+        handleRestaurantUpdates(res, id, {kitchen_styles: kitchen});
+    }else {
+        return res.status(400).json(
+            {
+                message: 'Operation not supported, please specify a name'
+            }
+        );
+    }
+}
+
 exports.deleteRestaurantById = (req, res) => {
     const id = req.params.id;
     Restaurant.findOneAndDelete({_id: id}) //suchparameter angeben

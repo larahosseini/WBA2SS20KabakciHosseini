@@ -20,7 +20,11 @@ router.put('/:id/name', restaurantController.updateRestaurantNameById);
 
 // PUT request
 // nur die Adresse des Restaurants updaten
-router.put('/:id/address', restaurantController.updateRestaurantAddressById)
+router.put('/:id/address', restaurantController.updateRestaurantAddressById);
+
+// PUT request
+// nur die Küche des Restaurants updaten
+router.put('/:id/kitchen', restaurantController.updateRestaurantKitchenById);
 
 // DELETE Request
 router.delete('/:id', restaurantController.deleteRestaurantById);
