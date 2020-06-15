@@ -14,18 +14,6 @@ router.get('/', restaurantController.getAllRestaurantsOrFilterRestaurantsByNameO
 // GET ID From Restaurants, damit ich exaktes restaurant finden kann
 router.get('/:id', restaurantController.getRestaurantById);
 
-// PATCH Request
-// how to use
-/*
-*   [
-*       {"propertyName": "name", "value": "Restaurant A"},
-        {"propertyName": "address.city", "value": "hannover"}
-*   ]
-*
-* */
-//patch = man kann einzelne sachen ändern
-router.patch('/:id', restaurantController.updateRestaurantById);
-
 // PUT request
 // nur den namen des Restaurants updaten
 router.put('/:id/name', restaurantController.updateRestaurantNameById);
