@@ -24,14 +24,20 @@ exports.createRestaurant = (req, res) => {
             city: req.body.address.city,
             street: req.body.address.street,
             street_number: req.body.address.street_number,
-            postal_code: req.body.address.postal_code
+            zipcode: req.body.address.zipcode
         },
         kitchen_styles: kitchen_styles //übergabe komplettes array
     });
-    restaurant.save() //speichern der Daten in der DB
+    restaurant.save()//speichern der Daten in der DB
         .then(result => {  //gibt formes/funktion zurück, gespeichertes Objekt der db wird zurückgegeben
             console.log('CREATED: ' + result); //im terminal ausgeben der gespeicherten werte
-            res.status(201).json(result); //status 201 = CREATED, benutzt man wenn man neue sachen erstellt hat, restaurant erstellt, mit .json objekt wieder zurück schicken
+            res.status(201).json({
+                id: result._id,
+                name: result.name,
+                address: result.address,
+                kitchen_styles: result.kitchen_styles,
+                bookmarked_users: result.bookmarked_users
+            }); //status 201 = CREATED, benutzt man wenn man neue sachen erstellt hat, restaurant erstellt, mit .json objekt wieder zurück schicken
         }).catch(error => { //wenn fehler passiert, dann wird dieser block aktiviert
         console.log('Error: ' + error);
         res.status(500).json({ //status 500 = INTERNAL_SERVER_ERROR
@@ -51,22 +57,24 @@ exports.getAllRestaurantsOrFilterRestaurantsByNameOrAddress = (req, res) => { //
 
 exports.getRestaurantById = (req, res) => { //erst fad angeben, dann handler
     Restaurant.findById(req.params.id) //sucht die db nach dem restaurant mit der angegebenen id
+        .select('_id name address kitchen_styles bookmarked_users')
         .exec() //liefert echtes promise zurück
         .then(result => { //liefert das ergebnis aus der suche zurück
+            console.log(result);
             if (result) { //prüfe ob das ergebnis leer ist bzw null
                 res.status(200).json(result);
             } else {
                 //status 404 = NOT FOUND
                 res.status(404).json({
-                    message: 'Restaurant [ID: ' + res.params.id + '] Not Found'
+                    message: 'Restaurant Not Found'
                 });
             }
         })
         .catch(error => { //bei fehlern wird dies aktiviert
-            console.log('Error: ' + error);
-            res.status(500).json(
+            console.log('Restaurant not found');
+            return res.status(404).json(
                 {
-                    error: error
+                    message: 'Restaurant not found'
                 }
             );
         });
@@ -138,7 +146,7 @@ exports.deleteRestaurantById = (req, res) => {
             console.log('DELETE: ' + result);
             if (result) { //wenn ergebnis nicht null ist
                 res.status(200).json(
-                    {message: 'DELETED [ID: ' + id + '] Restaurant successfully'}
+                    {message: 'Deleted Restaurant successfully'}
                 );
             } else {
                 res.status(404).json(
@@ -171,7 +179,13 @@ exports.createEvent = (req, res) => {
                 return res.status(201).json(
                     {
                         message: 'Event successful created',
-                        createdEvent: event
+                        createdEvent: {
+                            id: event._id,
+                            name: event.name,
+                            startDate: event.startDate,
+                            endDate: event.endDate,
+                            restaurantId: event.restaurantId
+                        }
                     }
                 );
             }
@@ -185,6 +199,7 @@ exports.createEvent = (req, res) => {
 exports.getEventsByRestaurantId = (req, res) => {
     const restaurantId = req.params.restaurantId;
     Event.find({restaurantId})
+        .select('_id name startDate endDate restaurantId')
         .exec()
         .then(results => {
             console.log('Events found: ' + results);
@@ -202,12 +217,16 @@ exports.getEventsByRestaurantId = (req, res) => {
 
 //gets all restaurants
 function getAllRestaurants(res) {
-    Restaurant.find() //sucht nach den Werten die ich eingebe, sucht in der db nach allen restaurants
+    Restaurant.find()//sucht nach den Werten die ich eingebe, sucht in der db nach allen restaurants
+        .select('_id name address kitchen_styles bookmarked_users')
         .exec() //liefert ein echtes promise
         .then(result => { //liefert das ergebnis egal ob liste leer oder voll
             console.log(result);
             //status 200 = OK, alles prima
-            res.status(200).json(result); //result, liste aller restaurants die in der db gespeichert idt
+            res.status(200).json({
+                count: result.length,
+                restaurants: result
+            }); //result, liste aller restaurants die in der db gespeichert idt
         })
         .catch(error => {
             console.log('Error: ' + error);
@@ -221,7 +240,8 @@ function getAllRestaurants(res) {
 //sucht alle restaurants die die kriterien in query erfüllen
 function filterRestaurants(res, query) {
     console.log(query);
-    Restaurant.find(query) //query: alles was in dem objekt ist wird danach gesucht
+    Restaurant.find(query)
+        .select('_id name address kitchen_styles bookmarked_users')//query: alles was in dem objekt ist wird danach gesucht
         .exec() //liefert echtes promise
         .then(result => { //liefert die ergebnisse von der suche zurück
             if (result) { //wenn die liste nicht null ist, dann schicke antwort
@@ -239,6 +259,7 @@ function filterRestaurants(res, query) {
 
 function handleRestaurantUpdates(res, id, updates) {
     Restaurant.findByIdAndUpdate(id, updates, {new: true})
+        .select('_id name address kitchen_styles bookmarked_users')
         .exec()
         .then(result => {
             if (result) {
