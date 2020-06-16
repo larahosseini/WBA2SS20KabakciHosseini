@@ -15,6 +15,7 @@ router.get('/', userController.getAllUsersOrUsersUsername);
 // GET: EIn User mit der ID finden
 router.get('/:id', userController.getUserById);
 
+//GET: gibt eine liste von restaurants zurück die in nähe der PLZ sind
 router.get('/:id/locations', userController.getRestaurantsNearUserById);
 
 // DELETE: Ein Benutzer durch ID finden und löschen
