@@ -14,7 +14,7 @@ const eventRoute = require('./routes/event_route/event_route');
 // database setup, verbindung zur DB wird erstellt
 //deprecated - wenn software oder funktion abgeändert wird und das alte nicht mehr benutzt werden soll sondern das neue
 mongoose.connect('mongodb+srv://admin:admin@cluster0-8efry.mongodb.net/test?retryWrites=true&w=majority',
-    {useNewUrlParser: true, useUnifiedTopology: true});
+    {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 // logging setup
 //middleware- wenn anfrage von server kommt kann man diese abfangen und so weiterleiten
