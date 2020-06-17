@@ -174,6 +174,36 @@ exports.bookmarkRestaurant = (req, res) => {
             handleError(error, 500, res);
         });
 };
+
+exports.unBookmarkRestaurant = (req, res) => {
+    const userId = req.params.userId;
+    const restaurantId = req.params.restaurantId;
+    const update = {restaurant: restaurantId};
+    User.findByIdAndUpdate(userId, {$pull: {bookmarked_restaurants: update}}, {new: true})
+        .exec()
+        .then(user => {
+            if (user) {
+                console.log('Undo Bookmark');
+                return res.status(200).json(
+                    {
+                        message: 'removed successful the bookmark',
+                        updates: user.bookmarked_restaurants
+                    }
+                );
+            } else {
+                console.log('User not found');
+                return res.status(200).json(
+                    {
+                        message: 'User Not Found'
+                    }
+                );
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, res);
+        });
+};
+
 // ==================================================== Helper Functions ===================================
 
 // Hole die Informationen aus der Anfrage an OpenStreetMap

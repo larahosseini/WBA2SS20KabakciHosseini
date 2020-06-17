@@ -24,6 +24,9 @@ router.get('/:id/locations', userController.getRestaurantsNearUserById);
 // DELETE: Ein Benutzer durch ID finden und löschen
 router.delete('/:id', userController.deleteUserById);
 
+// DELETE: ein restaurant unbookmarken
+router.delete('/:userId/bookmarks/:restaurantId', userController.unBookmarkRestaurant);
+
 // PUT: benutzernamen eines users updaten
 router.put('/:id/username', userController.updateUsername)
 
