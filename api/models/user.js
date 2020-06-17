@@ -9,9 +9,7 @@ const userSchema = mongoose.Schema({
     ],
     bookmarked_restaurants: [
         {
-            restaurant: {
-                type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', unique: true
-            }
+            type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', unique: true
         }
     ],
     statistic: {type: mongoose.Schema.Types.ObjectId, ref: 'Statistic'}
