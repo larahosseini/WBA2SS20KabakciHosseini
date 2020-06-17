@@ -141,14 +141,10 @@ exports.getUserById = (req, res) => {
             }
         })
         .catch(error => {
-            console.log(error);
-            res.status(500).json(
-                {
-                    error: error
-                }
-            )
+            handleError(error, 500, res);
         });
 };
+
 
 // ==================================================== Helper Functions ===================================
 
@@ -180,12 +176,12 @@ function sortForKitchenStyles(response, restaurants, userId) {
     User.findById(userId)
         .exec()
         .then(user => {
-            if (user){
-                for(let i = 0; i < restaurants.length; i++) {
+            if (user) {
+                for (let i = 0; i < restaurants.length; i++) {
                     const restaurant = restaurants[i];
-                    for (let j = 0; j < user.favourite_kitchen.length;j++){
+                    for (let j = 0; j < user.favourite_kitchen.length; j++) {
                         const favouriteKitchen = user.favourite_kitchen[j];
-                        if (restaurant.kitchen_styles.some(kitchenStyle => kitchenStyle.style.includes(favouriteKitchen))){
+                        if (restaurant.kitchen_styles.some(kitchenStyle => kitchenStyle.style.includes(favouriteKitchen))) {
                             console.log('Match found');
                             filteredRestaurants.push(restaurant);
                             break;
@@ -207,8 +203,8 @@ function sortForKitchenStyles(response, restaurants, userId) {
             }
         })
         .catch(error => {
-        handleError(error, 500, response);
-    })
+            handleError(error, 500, response);
+        })
 
 }
 
