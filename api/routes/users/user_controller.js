@@ -145,7 +145,35 @@ exports.getUserById = (req, res) => {
         });
 };
 
-
+exports.bookmarkRestaurant = (req, res) => {
+    const userId = req.params.userId;
+    const restaurantId = req.params.restaurantId;
+    console.log('Restaurant: ' + restaurantId);
+    const update = {restaurant: restaurantId};
+    User.findByIdAndUpdate(userId, {$push: {bookmarked_restaurants: update}}, {new: true, runValidators: true})
+        .exec()
+        .then(user => {
+            if (user) {
+                console.log('Bookmark');
+                return res.status(200).json(
+                    {
+                        message: 'bookmarked successful the restaurant',
+                        updates: user.bookmarked_restaurants
+                    }
+                );
+            } else {
+                console.log('User not found');
+                return res.status(200).json(
+                    {
+                        message: 'User Not Found'
+                    }
+                );
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, res);
+        });
+};
 // ==================================================== Helper Functions ===================================
 
 // Hole die Informationen aus der Anfrage an OpenStreetMap

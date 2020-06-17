@@ -8,6 +8,9 @@ const userController = require('./user_controller');
 // POST: Ein neuer Benutzer erstellen
 router.post('/', userController.createUser);
 
+// POST: ein Restaurant bookmarken
+router.post('/:userId/bookmarks/:restaurantId', userController.bookmarkRestaurant);
+
 // GET: Alle Benutzer auslesen oder
 // GET: Einen Benutzer durch username finden
 router.get('/', userController.getAllUsersOrUsersUsername);
