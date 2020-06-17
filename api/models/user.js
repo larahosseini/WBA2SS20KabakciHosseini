@@ -17,5 +17,5 @@ const userSchema = mongoose.Schema({
     statistic: {type: mongoose.Schema.Types.ObjectId, ref: 'Statistic'}
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('user2', userSchema);
 
