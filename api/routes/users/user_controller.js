@@ -2,7 +2,7 @@ const User = require('../../models/user');
 const Statistic = require('../../models/statistic');
 const Restaurant = require('../../models/restaurant');
 const NodeGeocoder = require('node-geocoder');
-
+const mongoose = require('mongoose');
 const geoCoder = NodeGeocoder({
     provider: 'openstreetmap'
 });
@@ -15,10 +15,16 @@ exports.createUser = (req, res) => {
         favourite_kitchen.push(req.body.favourite_kitchen[i]);
         console.log(req.body.favourite_kitchen[i]);
     }
+    const statistic = new Statistic({
+        _id: new mongoose.Types.ObjectId(),
+        bookmarked_restaurants: [],
+        visitations: []
+    });
     const user = new User({
         _id: new mongoose.Types.ObjectId(),
         username: username,
-        favourite_kitchen: favourite_kitchen
+        favourite_kitchen: favourite_kitchen,
+        statistic: statistic._id
     });
     User.findOne({username: user.username}).exec().then(result => {
         console.log('CREATED: ' + result)
@@ -31,7 +37,8 @@ exports.createUser = (req, res) => {
         } else {
             user.save().then(result => {
                 console.log(result);
-                res.status(201).json(
+                saveStatistic(res, statistic);
+                return res.status(201).json(
                     {
                         message: 'New User Created',
                         createUser: result
@@ -311,6 +318,16 @@ function handleError(error, statuscode, response) {
     return response.status(statuscode).json(
         {message: error}
     );
+}
+
+function saveStatistic(response, statistic) {
+    statistic.save().then(statistic => {
+        if (statistic) {
+            console.log('Saving statistic');
+        }
+    }).catch(error => {
+       handleError(error, 500, response);
+    });
 }
 
 // Hilfsfunktion alle Benutzer herauszubekommen
