@@ -1,4 +1,5 @@
 const User = require('../../models/user');
+const Statistic = require('../../models/statistic');
 const Restaurant = require('../../models/restaurant');
 const NodeGeocoder = require('node-geocoder');
 
@@ -145,6 +146,25 @@ exports.getUserById = (req, res) => {
         });
 };
 
+exports.getUserStatistic = (req, res) => {
+    const userId = req.params.id;
+    User.findById(userId)
+        .exec()
+        .then(user => {
+            if (user) {
+                console.log('Getting Statistic of User');
+                getStatistic(res, user.statistic);
+            } else {
+                return res.status(404).json({
+                    message: 'User Not Found'
+                });
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, res);
+        });
+};
+
 exports.bookmarkRestaurant = (req, res) => {
     const userId = req.params.userId;
     const restaurantId = req.params.restaurantId;
@@ -227,6 +247,26 @@ function getAddress(results, userId, response) {
                 console.log(error);
             });
     }
+}
+
+function getStatistic(response, statisticId) {
+    Statistic.findById(statisticId)
+        .select('')
+        .exec()
+        .then(statistic => {
+            if (statistic) {
+                console.log('Found Statistic');
+                return response.status(200).json(statistic);
+            }else {
+                console.log('No Statistic found');
+                return response.status(404).json({
+                    message: 'Statistic does not exist'
+                });
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, response);
+        });
 }
 
 function sortForKitchenStyles(response, restaurants, userId) {

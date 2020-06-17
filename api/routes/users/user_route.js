@@ -21,6 +21,9 @@ router.get('/:id', userController.getUserById);
 //GET: gibt eine liste von restaurants zurück die in nähe der PLZ sind
 router.get('/:id/locations', userController.getRestaurantsNearUserById);
 
+// GET: git eine Statistic eines user zurück
+router.get('/:id/statistics', userController.getUserStatistic)
+
 // DELETE: Ein Benutzer durch ID finden und löschen
 router.delete('/:id', userController.deleteUserById);
 
