@@ -176,12 +176,13 @@ exports.bookmarkRestaurant = (req, res) => {
     const userId = req.params.userId;
     const restaurantId = req.params.restaurantId;
     console.log('Restaurant: ' + restaurantId);
-    const update = {restaurant: restaurantId};
-    User.findByIdAndUpdate(userId, {$push: {bookmarked_restaurants: update}}, {new: true, runValidators: true})
+    User.findByIdAndUpdate(userId, {$push: {bookmarked_restaurants: restaurantId}}, {new: true})
         .exec()
         .then(user => {
             if (user) {
                 console.log('Bookmark');
+                console.log('StatisticId: ' + user.statistic);
+                updateStatisticBookmarks(res, user.statistic, restaurantId);
                 return res.status(200).json(
                     {
                         message: 'bookmarked successful the restaurant',
@@ -206,15 +207,16 @@ exports.unBookmarkRestaurant = (req, res) => {
     const userId = req.params.userId;
     const restaurantId = req.params.restaurantId;
     const update = {restaurant: restaurantId};
-    User.findByIdAndUpdate(userId, {$pull: {bookmarked_restaurants: update}}, {new: true})
+    User.findByIdAndUpdate(userId, {$pull: {bookmarked_restaurants: restaurantId}})
         .exec()
         .then(user => {
             if (user) {
                 console.log('Undo Bookmark');
+                removeStatisticBookmarks(res, user.statistic, restaurantId);
                 return res.status(200).json(
                     {
                         message: 'removed successful the bookmark',
-                        updates: user.bookmarked_restaurants
+                        bookmarked_restaurants_after_delete: user.bookmarked_restaurants
                     }
                 );
             } else {
@@ -264,7 +266,7 @@ function getStatistic(response, statisticId) {
             if (statistic) {
                 console.log('Found Statistic');
                 return response.status(200).json(statistic);
-            }else {
+            } else {
                 console.log('No Statistic found');
                 return response.status(404).json({
                     message: 'Statistic does not exist'
@@ -320,13 +322,39 @@ function handleError(error, statuscode, response) {
     );
 }
 
+function updateStatisticBookmarks(response, statisticId, restaurantId) {
+    Statistic.findByIdAndUpdate(statisticId, {$push: {bookmarked_restaurants: restaurantId}}, {new: true})
+        .exec()
+        .then(statistic => {
+            if (statistic) {
+                console.log('Statistic updated');
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, response);
+        });
+}
+
+function removeStatisticBookmarks(response, statisticId, restaurantId) {
+    Statistic.findByIdAndUpdate(statisticId, {$pull: {bookmarked_restaurants: restaurantId}}, {new: true})
+        .exec()
+        .then(statistic => {
+            if (statistic) {
+                console.log('Statistic updated');
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, response);
+        });
+}
+
 function saveStatistic(response, statistic) {
     statistic.save().then(statistic => {
         if (statistic) {
             console.log('Saving statistic');
         }
     }).catch(error => {
-       handleError(error, 500, response);
+        handleError(error, 500, response);
     });
 }
 
