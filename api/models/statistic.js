@@ -10,4 +10,4 @@ const statisticSchema = mongoose.Schema({
     ]
 });
 
-module.exports = mongoose.model('Visitation', statisticSchema);
+module.exports = mongoose.model('Statistic', statisticSchema);
