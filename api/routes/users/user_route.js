@@ -30,7 +30,8 @@ router.get('/:id/statistics', userController.getUserStatistic);
 // GET: ein restaurant vorgeschlagen bekommen, dass man noch nicht besucht oder gebookmarked hat
 router.get('/:id/recommendations', userController.getRecommendations);
 
-
+// GET: gibt alle besuche des benutzers zurück
+router.get('/:id/visitations', userController.getUserVisitations);
 
 // DELETE: Ein Benutzer durch ID finden und löschen
 router.delete('/:id', userController.deleteUserById);

@@ -257,6 +257,16 @@ exports.setRestaurantVisitation = (req, res) => {
         });
 }
 
+exports.getUserVisitations = (req, res) => {
+    const userId = req.params.id;
+    Visitation.find({user: userId})
+        .exec()
+        .then(visitations => {
+            return res.status(200).json(visitations);
+        }).catch(error => {
+        handleError(error, 500, res);
+    })
+};
 
 
 exports.getRecommendations = (req, res) => {
