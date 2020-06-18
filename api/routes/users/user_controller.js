@@ -1,5 +1,6 @@
 const User = require('../../models/user');
 const Statistic = require('../../models/statistic');
+const Visitation = require('../../models/visitation');
 const Restaurant = require('../../models/restaurant');
 const NodeGeocoder = require('node-geocoder');
 const mongoose = require('mongoose');
@@ -175,7 +176,6 @@ exports.getUserStatistic = (req, res) => {
 exports.bookmarkRestaurant = (req, res) => {
     const userId = req.params.userId;
     const restaurantId = req.params.restaurantId;
-    console.log('Restaurant: ' + restaurantId);
     User.findByIdAndUpdate(userId, {$push: {bookmarked_restaurants: restaurantId}}, {new: true})
         .exec()
         .then(user => {
@@ -232,6 +232,30 @@ exports.unBookmarkRestaurant = (req, res) => {
             handleError(error, 500, res);
         });
 };
+
+exports.setRestaurantVisitation = (req, res) => {
+    const userId = req.params.userId;
+    const restaurantId = req.params.restaurantId;
+    User.findById(userId)
+        .exec()
+        .then(user => {
+            if (user) {
+                console.log('Visitation');
+                console.log('StatisticId: ' + user.statistic);
+                updateStatisticVisitation(res, user.statistic, restaurantId, userId);
+            } else {
+                console.log('User not found');
+                return res.status(200).json(
+                    {
+                        message: 'User Not Found'
+                    }
+                );
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, res);
+        });
+}
 
 // ==================================================== Helper Functions ===================================
 
@@ -346,6 +370,43 @@ function removeStatisticBookmarks(response, statisticId, restaurantId) {
         .catch(error => {
             handleError(error, 500, response);
         });
+}
+
+function updateStatisticVisitation(response, statisticId, restaurantId, userId) {
+    const visitation = new Visitation({
+        _id: new mongoose.Types.ObjectId(),
+        restaurant: restaurantId,
+        user: userId
+    });
+    visitation
+        .save()
+        .then(visitation => {
+            if(visitation) {
+                handleStatisticVisitationUpdate(response, statisticId, visitation);
+            }
+        }).catch(error => {
+        handleError(error, 500, response);
+    });
+
+}
+
+function handleStatisticVisitationUpdate(response, statisticId, visitation){
+    Statistic.findByIdAndUpdate(statisticId, {$push: {visitations: visitation._id}})
+        .exec()
+        .then(statistic => {
+            if (statistic) {
+                console.log('Statistic got updated');
+                return response.status(200).json(
+                    {
+                        message: 'visitation at the restaurant registered',
+                        updates: visitation
+                    }
+                );
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, response);
+    });
 }
 
 function saveStatistic(response, statistic) {

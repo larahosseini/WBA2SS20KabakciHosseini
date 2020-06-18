@@ -11,6 +11,9 @@ router.post('/', userController.createUser);
 // POST: ein Restaurant bookmarken
 router.post('/:userId/bookmarks/:restaurantId', userController.bookmarkRestaurant);
 
+// POST: ein Restaurant als besucht ändern
+router.post('/:userId/visitations/:restaurantId', userController.setRestaurantVisitation);
+
 // GET: Alle Benutzer auslesen oder
 // GET: Einen Benutzer durch username finden
 router.get('/', userController.getAllUsersOrUsersUsername);
