@@ -6,7 +6,7 @@ const statisticSchema = mongoose.Schema({
         {type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant'}
     ],
     visitations: [
-        {type: mongoose.Schema.Types.ObjectId, ref: 'Visitation'}
+        {type: mongoose.Schema.Types.ObjectId, ref: 'Visitation2'}
     ]
 });
 

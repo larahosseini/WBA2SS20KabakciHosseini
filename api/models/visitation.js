@@ -7,4 +7,4 @@ const visitationSchema = mongoose.Schema({
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'user2'}
 });
 
-module.exports = mongoose.model('Visitation', visitationSchema);
+module.exports = mongoose.model('Visitation2', visitationSchema);
