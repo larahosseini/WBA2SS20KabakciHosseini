@@ -4,6 +4,7 @@ const Visitation = require('../../models/visitation');
 const Restaurant = require('../../models/restaurant');
 const NodeGeocoder = require('node-geocoder');
 const mongoose = require('mongoose');
+
 const geoCoder = NodeGeocoder({
     provider: 'openstreetmap'
 });
@@ -28,7 +29,6 @@ exports.createUser = (req, res) => {
         statistic: statistic._id
     });
     User.findOne({username: user.username}).exec().then(result => {
-        console.log('CREATED: ' + result)
         if (result) {
             res.status(405).json(
                 {
@@ -37,7 +37,7 @@ exports.createUser = (req, res) => {
             );
         } else {
             user.save().then(result => {
-                console.log(result);
+                console.log('CREATED: ' + result)
                 saveStatistic(res, statistic);
                 return res.status(201).json(
                     {
@@ -257,6 +257,50 @@ exports.setRestaurantVisitation = (req, res) => {
         });
 }
 
+
+
+exports.getRecommendations = (req, res) => {
+    const userId = req.params.id;
+    User.findById(userId)
+        .exec()
+        .then(user => {
+            if (user) {
+                const statisticId = user.statistic;
+                if (Object.keys(req.query).length > 0) {
+                    if (req.query.lat && req.query.lon) {
+                        const lat = req.query.lat;
+                        const lon = req.query.lon;
+                        geoCoder.reverse({lat: lat, lon: lon})
+                            .then(results => {
+                                console.log(results);
+                                getStatisticForRecommendations(res, statisticId, results);
+                            }).catch((err) => {
+                            console.log(err);
+                        });
+                    } else {
+                        return res.status(400).json(
+                            {message: 'Query Not Supported'}
+                        );
+                    }
+                } else {
+                    res.status(404).json(
+                        {error: 'Not Found'}
+                    );
+                }
+                //
+            } else {
+                return res.status(404).json(
+                    {
+                        message: 'User Not Found'
+                    }
+                );
+            }
+        })
+        .catch(error => {
+            handleError(error, 500, res);
+        });
+};
+
 // ==================================================== Helper Functions ===================================
 
 // Hole die Informationen aus der Anfrage an OpenStreetMap
@@ -381,7 +425,7 @@ function updateStatisticVisitation(response, statisticId, restaurantId, userId) 
     visitation
         .save()
         .then(visitation => {
-            if(visitation) {
+            if (visitation) {
                 handleStatisticVisitationUpdate(response, statisticId, visitation);
             }
         }).catch(error => {
@@ -390,7 +434,7 @@ function updateStatisticVisitation(response, statisticId, restaurantId, userId) 
 
 }
 
-function handleStatisticVisitationUpdate(response, statisticId, visitation){
+function handleStatisticVisitationUpdate(response, statisticId, visitation) {
     Statistic.findByIdAndUpdate(statisticId, {$push: {visitations: visitation._id}})
         .exec()
         .then(statistic => {
@@ -406,7 +450,115 @@ function handleStatisticVisitationUpdate(response, statisticId, visitation){
         })
         .catch(error => {
             handleError(error, 500, response);
+        });
+}
+
+function getStatisticForRecommendations(response, statisticId, openStreetMapResults) {
+    Statistic.findById(statisticId)
+        .exec()
+        .then(statistic => {
+            if (statistic) {
+                getAddressForRecommendations(response, openStreetMapResults, statistic.bookmarked_restaurants, statistic.visitations);
+                // checkBookmarksForRecommendation(response, statistic.bookmarked_restaurants);
+            } else {
+                return response.status(404).json({
+                    message: 'Statistic Not Found'
+                });
+            }
+        }).catch(error => {
+        handleError(error, 500, response);
     });
+}
+
+function getAddressForRecommendations(response, openStreetMapResults, bookmarked_restaurants, visitations) {
+    if (openStreetMapResults.length > 0) {
+        const address = openStreetMapResults[0];
+        const city = address.city.toLocaleString();
+        const query = {
+            'address.city': city
+        }
+        getBookmarkRecommendation(response, query, bookmarked_restaurants, visitations);
+    }
+}
+
+function getBookmarkRecommendation(response, query, bookmarked_restaurants, visitations) {
+    let duplicatedRestaurants = [];
+    Restaurant.find(query)
+        .exec()
+        .then(restaurants => {
+            console.log('Restaurants in the city: ' + restaurants.length);
+            for (let i = 0; i < restaurants.length; i++) {
+                for (let j = 0; j < bookmarked_restaurants.length; j++) {
+                    if (restaurants[i]._id.equals(bookmarked_restaurants[j])) {
+                        console.log('Recommendation found: ' + restaurants[i]._id);
+                        duplicatedRestaurants.push(restaurants[i]);
+                    }
+                }
+            }
+            const filteredRestaurants = restaurants.filter(restaurant => !duplicatedRestaurants.includes(restaurant));
+            const recommendation = filteredRestaurants[Math.floor(Math.random() * filteredRestaurants.length)];
+            console.log('Recommendation found: ' + recommendation);
+            getVisitationRecommendation(response, recommendation, visitations);
+        })
+        .catch(error => {
+            handleError(error, 500, response);
+        });
+}
+
+function getVisitationRecommendation(response, bookmarkRecommendation, visitations) {
+    const duplicatedVisitation = [];
+    for (let i = 0; i < visitations.length; i++) {
+        console.log(visitations[i]);
+        Visitation.findById(visitations[i])
+            .exec()
+            .then(visitation => {
+                if (visitation) {
+                    duplicatedVisitation.push(visitation);
+                }
+            })
+            .catch(error => {
+                handleError(error, 500, response);
+            });
+    }
+    Visitation.find()
+        .exec()
+        .then(visits => {
+            const filteredVisitations = visits.filter(visit => !duplicatedVisitation.includes(visit));
+            const randomVisitation = filteredVisitations[Math.floor(Math.random * filteredVisitations.length)];
+            if (randomVisitation) {
+                Restaurant.findById(randomVisitation.restaurant)
+                    .exec()
+                    .then(restaurant => {
+                        if (restaurant) {
+                            return response.status(200).json(
+                                {
+                                    message: 'Recommendation Based on bookmarked Restaurants and last visited Restaurants',
+                                    bookmark_recommendation: bookmarkRecommendation,
+                                    visitation_recommendation: restaurant
+                                }
+                            );
+                        } else {
+                            return response.status(404).json({
+                                message: 'Restaurant Not Found'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        handleError(error, 500, response);
+                    });
+            }else {
+                return response.status(200).json(
+                    {
+                        message: 'Recommendation Based on bookmarked Restaurants',
+                        bookmark_recommendation: bookmarkRecommendation
+                    }
+                );
+            }
+
+        }).catch(error => {
+        handleError(error, 500, response);
+    });
+
 }
 
 function saveStatistic(response, statistic) {

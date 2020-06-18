@@ -25,7 +25,12 @@ router.get('/:id', userController.getUserById);
 router.get('/:id/locations', userController.getRestaurantsNearUserById);
 
 // GET: git eine Statistic eines user zurück
-router.get('/:id/statistics', userController.getUserStatistic)
+router.get('/:id/statistics', userController.getUserStatistic);
+
+// GET: ein restaurant vorgeschlagen bekommen, dass man noch nicht besucht oder gebookmarked hat
+router.get('/:id/recommendations', userController.getRecommendations);
+
+
 
 // DELETE: Ein Benutzer durch ID finden und löschen
 router.delete('/:id', userController.deleteUserById);
@@ -34,7 +39,7 @@ router.delete('/:id', userController.deleteUserById);
 router.delete('/:userId/bookmarks/:restaurantId', userController.unBookmarkRestaurant);
 
 // PUT: benutzernamen eines users updaten
-router.put('/:id/username', userController.updateUsername)
+router.put('/:id/username', userController.updateUsername);
 
 
 
